@@ -34,3 +34,4 @@ export async function GET(
     return new NextResponse('Image not found', { status: 404 });
   }
 }
+
