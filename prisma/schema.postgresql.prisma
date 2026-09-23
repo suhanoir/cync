@@ -1,0 +1,238 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum WorkoutType {
+  STRENGTH
+  CARDIO
+  RUNNING
+  CYCLING
+  CALISTHENICS
+  HIIT
+  WALKING
+  SPORTS
+  YOGA
+  OTHER
+}
+
+enum GoalType {
+  WORKOUTS_PER_WEEK
+  WORKOUT_MINUTES
+  STREAK_DAYS
+}
+
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  EXPIRED
+  ARCHIVED
+}
+
+enum ChallengeType {
+  TOTAL_MINUTES
+  TOTAL_WORKOUTS
+  CONSECUTIVE_DAYS
+}
+
+model User {
+  id              String         @id @default(cuid())
+  name            String
+  username        String         @unique
+  email           String         @unique
+  passwordHash    String
+  avatar          String?
+  bio             String?
+  timezone        String         @default("UTC")
+  primaryGoal     String?        @default("Build consistency")
+  weeklyTarget    Int            @default(4)
+  onboarded       Boolean        @default(false)
+  
+  // Privacy & Notification settings
+  profilePrivate  Boolean        @default(false)
+  workoutsPrivate Boolean        @default(false)
+  notifyWorkouts  Boolean        @default(true)
+  notifyReactions Boolean        @default(true)
+  notifyNudges    Boolean        @default(true)
+  notifyChallenges Boolean       @default(true)
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  workouts        Workout[]
+  photos          WorkoutPhoto[]
+  squadMembers    SquadMember[]
+  ownedSquads     Squad[]        @relation("SquadOwner")
+  goals           Goal[]
+  challengesCreated Challenge[]  @relation("ChallengeCreator")
+  reactions       Reaction[]
+  nudgesSent      Nudge[]        @relation("NudgeSender")
+  nudgesReceived  Nudge[]        @relation("NudgeRecipient")
+  notifications   Notification[]
+
+  @@index([email])
+  @@index([username])
+}
+
+model Squad {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  owner       User          @relation("SquadOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  inviteCode  String        @unique
+  isPrivate   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  members     SquadMember[]
+  workouts    Workout[]
+  challenges  Challenge[]
+  nudges      Nudge[]
+
+  @@index([inviteCode])
+}
+
+model SquadMember {
+  id       String   @id @default(cuid())
+  squadId  String
+  squad    Squad    @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role     Role     @default(MEMBER)
+  joinedAt DateTime @default(now())
+
+  @@unique([squadId, userId])
+  @@index([squadId])
+  @@index([userId])
+}
+
+model Workout {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  squadId     String?
+  squad       Squad?            @relation(fields: [squadId], references: [id], onDelete: SetNull)
+  type        WorkoutType
+  duration    Int               // in minutes
+  distance    Float?            // in km
+  calories    Int?
+  notes       String?
+  completedAt DateTime          @default(now())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  exercises   WorkoutExercise[]
+  photo       WorkoutPhoto?
+  reactions   Reaction[]
+
+  @@index([userId, completedAt])
+  @@index([squadId, completedAt])
+}
+
+model WorkoutExercise {
+  id           String   @id @default(cuid())
+  workoutId    String
+  workout      Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exerciseName String
+  sets         Int?
+  reps         Int?
+  weight       Float?   // in kg
+
+  @@index([workoutId])
+}
+
+model WorkoutPhoto {
+  id               String   @id @default(cuid())
+  workoutId        String   @unique
+  workout          Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storageReference String   // image URL or path
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Goal {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  type      GoalType
+  target    Int
+  startDate DateTime   @default(now())
+  endDate   DateTime?
+  status    GoalStatus @default(ACTIVE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([userId, status])
+}
+
+model Challenge {
+  id          String        @id @default(cuid())
+  squadId     String
+  squad       Squad         @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  creatorId   String
+  creator     User          @relation("ChallengeCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  type        ChallengeType
+  target      Int           // target minutes, workouts, or days
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([squadId, startDate, endDate])
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutId String
+  workout   Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  type      String   // "fire", "muscle", "clap", "bolt"
+  createdAt DateTime @default(now())
+
+  @@unique([userId, workoutId, type])
+  @@index([workoutId])
+}
+
+model Nudge {
+  id          String   @id @default(cuid())
+  senderId    String
+  sender      User     @relation("NudgeSender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipientId String
+  recipient   User     @relation("NudgeRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  squadId     String?
+  squad       Squad?   @relation(fields: [squadId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+
+  @@index([recipientId, createdAt])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String    // "WORKOUT_COMPLETED", "REACTION", "NUDGE", "SQUAD_JOIN", "CHALLENGE", "GOAL"
+  payload   String    // JSON string
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, readAt])
+}
+

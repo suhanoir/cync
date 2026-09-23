@@ -1,0 +1,177 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String         @id @default(cuid())
+  name            String
+  username        String         @unique
+  email           String         @unique
+  passwordHash    String
+  avatar          String?
+  bio             String?
+  timezone        String         @default("UTC")
+  primaryGoal     String?        @default("Build consistency")
+  weeklyTarget    Int            @default(4)
+  onboarded       Boolean        @default(false)
+  
+  // Privacy & Notification settings
+  profilePrivate  Boolean        @default(false)
+  workoutsPrivate Boolean        @default(false)
+  notifyWorkouts  Boolean        @default(true)
+  notifyReactions Boolean        @default(true)
+  notifyNudges    Boolean        @default(true)
+  notifyChallenges Boolean       @default(true)
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  workouts        Workout[]
+  photos          WorkoutPhoto[]
+  squadMembers    SquadMember[]
+  ownedSquads     Squad[]        @relation("SquadOwner")
+  goals           Goal[]
+  challengesCreated Challenge[]  @relation("ChallengeCreator")
+  reactions       Reaction[]
+  nudgesSent      Nudge[]        @relation("NudgeSender")
+  nudgesReceived  Nudge[]        @relation("NudgeRecipient")
+  notifications   Notification[]
+}
+
+model Squad {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  owner       User          @relation("SquadOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  inviteCode  String        @unique
+  isPrivate   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  members     SquadMember[]
+  workouts    Workout[]
+  challenges  Challenge[]
+  nudges      Nudge[]
+}
+
+model SquadMember {
+  id       String   @id @default(cuid())
+  squadId  String
+  squad    Squad    @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role     String   @default("MEMBER") // "OWNER", "ADMIN", "MEMBER"
+  joinedAt DateTime @default(now())
+
+  @@unique([squadId, userId])
+}
+
+model Workout {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  squadId     String?
+  squad       Squad?            @relation(fields: [squadId], references: [id], onDelete: SetNull)
+  type        String            // "Strength", "Cardio", "Running", "Cycling", "Calisthenics", "HIIT", "Walking", "Sports", "Yoga", "Other"
+  duration    Int               // in minutes
+  distance    Float?            // in km
+  calories    Int?
+  notes       String?
+  completedAt DateTime          @default(now())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  exercises   WorkoutExercise[]
+  photo       WorkoutPhoto?
+  reactions   Reaction[]
+}
+
+model WorkoutExercise {
+  id           String   @id @default(cuid())
+  workoutId    String
+  workout      Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exerciseName String
+  sets         Int?
+  reps         Int?
+  weight       Float?   // in kg
+}
+
+model WorkoutPhoto {
+  id               String   @id @default(cuid())
+  workoutId        String   @unique
+  workout          Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storageReference String   // image URL or path
+  createdAt        DateTime @default(now())
+}
+
+model Goal {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  type      String    // "WORKOUTS_PER_WEEK", "WORKOUT_MINUTES", "STREAK_DAYS"
+  target    Int
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  status    String    @default("ACTIVE") // "ACTIVE", "COMPLETED", "EXPIRED", "ARCHIVED"
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Challenge {
+  id          String   @id @default(cuid())
+  squadId     String
+  squad       Squad    @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  creatorId   String
+  creator     User     @relation("ChallengeCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  type        String   // "TOTAL_MINUTES", "TOTAL_WORKOUTS", "CONSECUTIVE_DAYS"
+  target      Int      // target number of minutes, workouts, or days
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutId String
+  workout   Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  type      String   // "fire", "muscle", "clap", "bolt"
+  createdAt DateTime @default(now())
+
+  @@unique([userId, workoutId, type])
+}
+
+model Nudge {
+  id          String   @id @default(cuid())
+  senderId    String
+  sender      User     @relation("NudgeSender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipientId String
+  recipient   User     @relation("NudgeRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  squadId     String?
+  squad       Squad?   @relation(fields: [squadId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String    // "WORKOUT_COMPLETED", "REACTION", "NUDGE", "SQUAD_JOIN", "CHALLENGE", "GOAL"
+  payload   String    // JSON string
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
