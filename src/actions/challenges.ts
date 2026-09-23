@@ -81,3 +81,4 @@ export async function createChallengeAction(squadId: string, formData: FormData)
   revalidatePath(`/squads/${squadId}`);
   redirect(`/squads/${squadId}`);
 }
+

@@ -246,3 +246,4 @@ export async function deleteWorkoutAction(workoutId: string) {
 
   return { success: true };
 }
+

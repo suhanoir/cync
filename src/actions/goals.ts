@@ -74,3 +74,4 @@ export async function deleteGoalAction(goalId: string) {
   revalidatePath('/dashboard');
   return { success: true };
 }
+

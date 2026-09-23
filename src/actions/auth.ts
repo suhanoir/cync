@@ -180,3 +180,4 @@ export async function deleteAccountAction() {
   await clearSessionCookie();
   redirect('/');
 }
+
