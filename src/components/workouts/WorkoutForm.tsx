@@ -247,3 +247,4 @@ export function WorkoutForm({ initialData, squads = [], onSuccess }: WorkoutForm
     </Card>
   );
 }
+

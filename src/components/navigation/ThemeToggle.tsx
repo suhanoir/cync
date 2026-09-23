@@ -50,3 +50,4 @@ export function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
     </div>
   );
 }
+

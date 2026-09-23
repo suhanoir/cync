@@ -144,3 +144,4 @@ export function WorkoutDetailClient({ workout, isOwner, squads }: WorkoutDetailC
     </>
   );
 }
+

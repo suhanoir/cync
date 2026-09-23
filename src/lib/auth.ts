@@ -93,3 +93,4 @@ export async function requireAuth(): Promise<AuthUser> {
   }
   return user;
 }
+

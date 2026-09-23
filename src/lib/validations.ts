@@ -219,3 +219,4 @@ export function validateSquadInput(data: {
     data: { name, description, isPrivate },
   };
 }
+

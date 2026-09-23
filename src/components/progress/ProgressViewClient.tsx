@@ -224,3 +224,4 @@ export function ProgressViewClient({
     </div>
   );
 }
+

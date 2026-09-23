@@ -128,3 +128,4 @@ export function WorkoutCard({ workout }: WorkoutCardProps) {
     </Link>
   );
 }
+

@@ -113,3 +113,4 @@ export function SquadMemberList({ members, currentUserId, squadId }: SquadMember
     </div>
   );
 }
+

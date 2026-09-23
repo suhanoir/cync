@@ -40,3 +40,4 @@ export function Header({ user, unreadCount = 0 }: HeaderProps) {
     </header>
   );
 }
+

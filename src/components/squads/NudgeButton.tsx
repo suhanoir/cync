@@ -50,3 +50,4 @@ export function NudgeButton({ recipientId, recipientName, squadId }: NudgeButton
     </button>
   );
 }
+

@@ -46,3 +46,4 @@ export function Skeleton({ className = '' }: { className?: string }) {
     />
   );
 }
+

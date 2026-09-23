@@ -52,3 +52,4 @@ export function Avatar({ name, avatarUrl, size = 'md', className = '' }: AvatarP
     </div>
   );
 }
+

@@ -77,3 +77,4 @@ export function ReactionPicker({ workoutId, reactions: initialReactions, current
     </div>
   );
 }
+

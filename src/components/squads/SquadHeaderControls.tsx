@@ -86,3 +86,4 @@ export function SquadHeaderControls({ squadId, isOwner, memberCount }: SquadHead
     </>
   );
 }
+

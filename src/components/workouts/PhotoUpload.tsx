@@ -126,3 +126,4 @@ export function PhotoUpload({ photoUrl, onChange }: PhotoUploadProps) {
     </div>
   );
 }
+

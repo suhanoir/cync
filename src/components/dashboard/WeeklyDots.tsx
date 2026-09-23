@@ -65,3 +65,4 @@ export function WeeklyDots({ days }: WeeklyDotsProps) {
     </Card>
   );
 }
+

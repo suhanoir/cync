@@ -57,3 +57,4 @@ export interface DayActivityStatus {
   totalDuration: number;
   workoutCount: number;
 }
+

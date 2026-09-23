@@ -127,3 +127,4 @@ export function ActivityFeedItem({ workout, currentUserId }: ActivityFeedItemPro
     </Card>
   );
 }
+

@@ -170,3 +170,4 @@ export default function NewChallengePage({ params }: { params: { id: string } })
     </div>
   );
 }
+

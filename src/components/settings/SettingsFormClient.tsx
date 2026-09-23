@@ -536,3 +536,4 @@ export function SettingsFormClient({ user }: SettingsFormClientProps) {
     </div>
   );
 }
+

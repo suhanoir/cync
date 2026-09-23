@@ -140,3 +140,4 @@ export function Sidebar({ user, unreadNotifications = 0 }: SidebarProps) {
     </aside>
   );
 }
+

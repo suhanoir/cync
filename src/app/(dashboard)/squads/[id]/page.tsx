@@ -295,3 +295,4 @@ export default async function SquadDetailPage({
     </div>
   );
 }
+

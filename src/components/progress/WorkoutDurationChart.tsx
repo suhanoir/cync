@@ -149,3 +149,4 @@ export function WorkoutDurationChart({ data }: WorkoutDurationChartProps) {
     </Card>
   );
 }
+

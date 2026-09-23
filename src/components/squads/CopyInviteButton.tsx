@@ -45,3 +45,4 @@ export function CopyInviteButton({ inviteCode }: CopyInviteButtonProps) {
     </div>
   );
 }
+

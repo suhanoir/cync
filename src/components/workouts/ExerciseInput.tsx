@@ -110,3 +110,4 @@ export function ExerciseInput({ exercises, onChange }: ExerciseInputProps) {
     </div>
   );
 }
+

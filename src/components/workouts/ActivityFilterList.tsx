@@ -157,3 +157,4 @@ export function ActivityFilterList({ workouts }: { workouts: WorkoutItem[] }) {
     </div>
   );
 }
+

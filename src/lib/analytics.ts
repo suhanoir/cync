@@ -178,3 +178,4 @@ export function getWeeklyOverview(
 
   return days;
 }
+
