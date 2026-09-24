@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { WorkoutCard } from './WorkoutCard';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { QuoteBlock } from '../ui/QuoteBlock';
 import { WORKOUT_TYPES, WorkoutType } from '@/lib/types';
 import { Plus, Filter, ArrowUpDown, Dumbbell, Sparkles } from 'lucide-react';
 import { isThisWeek, isThisMonth } from 'date-fns';
@@ -134,15 +135,19 @@ export function ActivityFilterList({ workouts }: { workouts: WorkoutItem[] }) {
                 : 'Try adjusting your time range or workout type filter above.'}
             </p>
           </div>
-          {workouts.length === 0 && (
-            <Link
-              href="/workouts/new"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-cync-green hover:bg-cync-green-muted text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Log First Workout</span>
-            </Link>
-          )}
+
+          {workouts.length === 0 ? (
+            <>
+              <QuoteBlock variant="minimal" quote="One session is enough to begin." />
+              <Link
+                href="/workouts/new"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-cync-green hover:bg-cync-green-muted text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Log First Workout</span>
+              </Link>
+            </>
+          ) : null}
         </Card>
       ) : (
         <div className="space-y-3">

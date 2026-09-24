@@ -1,6 +1,7 @@
 import React from 'react';
 import { DayActivityStatus } from '@/lib/types';
 import { Card } from '../ui/Card';
+import { QuoteBlock } from '../ui/QuoteBlock';
 
 interface WeeklyDotsProps {
   days: DayActivityStatus[];
@@ -11,13 +12,17 @@ export function WeeklyDots({ days }: WeeklyDotsProps) {
 
   return (
     <Card className="p-5 space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          Weekly Overview
-        </h3>
-        <span className="text-xs font-semibold text-foreground">
-          {activeDaysCount} of 7 days active
-        </span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1">
+        <div>
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Weekly Overview
+          </h3>
+          <span className="text-xs font-semibold text-foreground">
+            {activeDaysCount} of 7 days active
+          </span>
+        </div>
+
+        <QuoteBlock variant="minimal" quote="Small steps. Every single day." />
       </div>
 
       {/* Mon - Sun Dot Row */}
@@ -65,4 +70,3 @@ export function WeeklyDots({ days }: WeeklyDotsProps) {
     </Card>
   );
 }
-

@@ -98,3 +98,8 @@ input:-webkit-autofill:active {
   outline: 2px solid #10b981;
   outline-offset: 2px;
 }
+
+/* Dedicated Cync cursive quote font utility */
+.font-quote {
+  font-family: var(--font-quote), Georgia, serif;
+}

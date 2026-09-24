@@ -87,6 +87,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
+              showPasswordToggle
               required
             />
 
@@ -96,25 +97,28 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {/* Demo Logins for Fast Testing */}
+          {/* Demo Sandbox for Testing */}
           <div className="mt-6 pt-5 border-t border-border">
-            <p className="text-[11px] text-muted-foreground text-center mb-2.5 uppercase tracking-wider font-medium">
-              Demo Squad Members
-            </p>
+            <div className="flex items-center justify-center gap-1.5 mb-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80" />
+              <p className="text-[11px] text-muted-foreground text-center uppercase tracking-wider font-semibold">
+                Demo Sandbox Accounts
+              </p>
+            </div>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <button
                 type="button"
                 onClick={() => handleFillDemo('suhan@cync.fit')}
-                className="py-1.5 px-2 bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground rounded border border-border text-center transition-colors"
+                className="py-1.5 px-2 bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg border border-border text-center transition-colors font-medium"
               >
-                Suhan (Owner)
+                Suhan (Squad Leader)
               </button>
               <button
                 type="button"
                 onClick={() => handleFillDemo('arjun@cync.fit')}
-                className="py-1.5 px-2 bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground rounded border border-border text-center transition-colors"
+                className="py-1.5 px-2 bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg border border-border text-center transition-colors font-medium"
               >
-                Arjun (Member)
+                Arjun (Squad Member)
               </button>
             </div>
           </div>

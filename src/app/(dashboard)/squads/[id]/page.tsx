@@ -5,6 +5,7 @@ import { db } from '@/lib/db';
 import { calculateStreaks, formatDateToTz } from '@/lib/analytics';
 import { SquadMemberList, SquadMemberData } from '@/components/squads/SquadMemberList';
 import { SquadAnalyticsCard } from '@/components/squads/SquadAnalyticsCard';
+import { WeeklySquadRecap } from '@/components/squads/WeeklySquadRecap';
 import { CopyInviteButton } from '@/components/squads/CopyInviteButton';
 import { SquadHeaderControls } from '@/components/squads/SquadHeaderControls';
 import { ActivityFeedItem } from '@/components/feed/ActivityFeedItem';
@@ -181,7 +182,16 @@ export default async function SquadDetailPage({
         </div>
       </div>
 
-      {/* 1. Squad Members Snapshot */}
+      {/* 1. Weekly Collective Squad Recap */}
+      <WeeklySquadRecap
+        squadName={squad.name}
+        totalWorkouts={totalSquadWorkouts}
+        totalMinutes={totalSquadMinutes}
+        activeMembersCount={activeMembersCount}
+        totalMembersCount={squad.members.length}
+      />
+
+      {/* 2. Squad Members Snapshot */}
       <SquadMemberList
         members={memberDataList}
         currentUserId={currentUser.id}

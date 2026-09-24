@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
 import { Badge } from '../ui/Badge';
+import { QuoteBlock } from '../ui/QuoteBlock';
 import { createGoalAction, updateGoalStatusAction, deleteGoalAction } from '@/actions/goals';
 import { useToast } from '../providers/ToastProvider';
 import { Plus, Target, CheckCircle2, Archive, Trash2, Dumbbell, Flame, Clock } from 'lucide-react';
@@ -84,7 +85,10 @@ export function GoalsViewClient({ goals }: GoalsViewClientProps) {
       {/* Top Header Action */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Personal Goals</h1>
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Personal Goals</h1>
+            <QuoteBlock variant="minimal" quote="A little effort, repeated often." />
+          </div>
           <p className="text-xs text-muted-foreground mt-0.5">
             Clear, achievable targets to structure your consistency and habits.
           </p>
@@ -113,10 +117,13 @@ export function GoalsViewClient({ goals }: GoalsViewClientProps) {
                 Set a weekly workout target, minute threshold, or streak milestone.
               </p>
             </div>
-            <Button onClick={() => setIsModalOpen(true)} size="sm" className="gap-1.5">
-              <Plus className="w-3.5 h-3.5" />
-              <span>Create Your First Goal</span>
-            </Button>
+            <QuoteBlock variant="minimal" quote="A little effort, repeated often." />
+            <div className="pt-1">
+              <Button onClick={() => setIsModalOpen(true)} size="sm" className="gap-1.5">
+                <Plus className="w-3.5 h-3.5" />
+                <span>Create Your First Goal</span>
+              </Button>
+            </div>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

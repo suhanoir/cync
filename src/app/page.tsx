@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, ShieldCheck, Flame, Users, BarChart3 } from 'lucide-react';
+import { QuoteBlock } from '@/components/ui/QuoteBlock';
 import { getCurrentUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
@@ -106,6 +107,13 @@ export default async function LandingPage() {
             </p>
           </div>
         </div>
+
+        {/* Subtle Signature Quote */}
+        <QuoteBlock
+          variant="banner"
+          quote="Small steps. Every single day."
+          className="w-full max-w-sm mx-auto mt-12 border-border/30"
+        />
       </main>
 
       {/* Footer */}

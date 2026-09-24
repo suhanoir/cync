@@ -56,6 +56,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
+        quote: ['var(--font-quote)', 'Georgia', 'serif'],
       },
     },
   },

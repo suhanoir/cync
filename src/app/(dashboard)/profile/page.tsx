@@ -7,6 +7,7 @@ import { calculateStreaks, formatDateToTz } from '@/lib/analytics';
 import { Card } from '@/components/ui/Card';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
+import { QuoteBlock } from '@/components/ui/QuoteBlock';
 import {
   Settings,
   Flame,
@@ -137,6 +138,13 @@ export default async function ProfilePage() {
           <span className="text-[10px] text-muted-foreground">accumulated effort</span>
         </Card>
       </div>
+
+      {/* Signature Cursive Reflection */}
+      <QuoteBlock
+        variant="banner"
+        quote="Becoming takes time."
+        className="border-border/30 my-2"
+      />
 
       {/* Squads List */}
       <div className="space-y-3">

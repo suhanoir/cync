@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { calculateStreaks } from '@/lib/analytics';
 import { ProgressViewClient } from '@/components/progress/ProgressViewClient';
+import { QuoteBlock } from '@/components/ui/QuoteBlock';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,7 +32,10 @@ export default async function ProgressPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Progress & Analytics</h1>
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Progress & Analytics</h1>
+          <QuoteBlock variant="minimal" quote="Consistency compounds." />
+        </div>
         <p className="text-xs text-muted-foreground mt-0.5">
           Real metrics derived from your logged sessions. No hardcoded or fabricated statistics.
         </p>
@@ -47,4 +51,3 @@ export default async function ProgressPage() {
     </div>
   );
 }
-

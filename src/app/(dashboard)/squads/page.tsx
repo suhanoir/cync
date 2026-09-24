@@ -5,6 +5,7 @@ import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { QuoteBlock } from '@/components/ui/QuoteBlock';
 import { Plus, Users, ArrowRight, Shield } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -39,7 +40,10 @@ export default async function SquadsPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Your Squads</h1>
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Your Squads</h1>
+            <QuoteBlock variant="minimal" quote="Show up together." />
+          </div>
           <p className="text-xs text-muted-foreground mt-0.5">
             Accountability groups where you and your circle keep each other showing up.
           </p>
@@ -75,6 +79,7 @@ export default async function SquadsPage() {
               Create a squad for your friend group or join one using an invite code to share consistency.
             </p>
           </div>
+          <QuoteBlock variant="minimal" quote="Find your people, build your rhythm." />
           <div className="flex items-center justify-center gap-3 pt-2">
             <Link
               href="/squads/new"
