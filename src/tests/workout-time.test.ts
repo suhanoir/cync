@@ -96,3 +96,4 @@ describe('Workout Time & Duration System', () => {
     expect(formatElapsedSeconds(3725)).toBe('01:02:05');
   });
 });
+

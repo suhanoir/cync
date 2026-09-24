@@ -296,3 +296,4 @@ export function LiveWorkoutTimer({ onFinish, compact = false }: LiveWorkoutTimer
     </button>
   );
 }
+

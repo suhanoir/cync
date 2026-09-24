@@ -51,3 +51,4 @@ export function NewWorkoutClient({ squads }: NewWorkoutClientProps) {
     </div>
   );
 }
+
