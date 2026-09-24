@@ -1,12 +1,65 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Camera, X, RefreshCw, UploadCloud } from 'lucide-react';
+import { Camera, X, RefreshCw } from 'lucide-react';
 import { useToast } from '../providers/ToastProvider';
 
 interface PhotoUploadProps {
   photoUrl: string | null;
   onChange: (url: string | null) => void;
+}
+
+// Client-side image resize helper to compress large phone photos before network transport
+async function compressImageOnClient(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    // If not an image or SVG, skip canvas compression
+    if (!file.type.startsWith('image/') || file.type.includes('svg')) {
+      return resolve(file);
+    }
+
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const MAX_DIM = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width > height) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          } else {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return resolve(file);
+
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob && blob.size < file.size) {
+              resolve(blob);
+            } else {
+              resolve(file);
+            }
+          },
+          'image/jpeg',
+          0.82
+        );
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 export function PhotoUpload({ photoUrl, onChange }: PhotoUploadProps) {
@@ -18,23 +71,25 @@ export function PhotoUpload({ photoUrl, onChange }: PhotoUploadProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      toastError('Image size must be less than 5MB.');
-      return;
-    }
-
-    // Validate type
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      toastError('Please upload a valid JPEG, PNG, or WebP image.');
+    // Validate size (15MB raw max before client compression)
+    if (file.size > 15 * 1024 * 1024) {
+      toastError('Image size must be less than 15MB.');
       return;
     }
 
     setIsUploading(true);
 
     try {
+      // Compress in browser for instant transfer
+      let uploadBlob: Blob = file;
+      try {
+        uploadBlob = await compressImageOnClient(file);
+      } catch (compErr) {
+        console.warn('Client compression fallback:', compErr);
+      }
+
       const formData = new FormData();
-      formData.append('photo', file);
+      formData.append('photo', uploadBlob, file.name || 'workout_proof.jpg');
 
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -43,13 +98,14 @@ export function PhotoUpload({ photoUrl, onChange }: PhotoUploadProps) {
 
       const data = await res.json();
       if (!res.ok || data.error) {
-        toastError(data.error || 'Failed to upload photo.');
+        toastError(data.error || 'Failed to process image upload.');
       } else {
         onChange(data.url);
-        toastSuccess('Proof photo uploaded.');
+        toastSuccess('Proof photo attached.');
       }
-    } catch {
-      toastError('Failed to upload photo.');
+    } catch (err: any) {
+      console.error('Upload error:', err);
+      toastError(err?.message || 'Failed to upload photo.');
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -70,7 +126,7 @@ export function PhotoUpload({ photoUrl, onChange }: PhotoUploadProps) {
         type="file"
         ref={fileInputRef}
         onChange={handleFileSelect}
-        accept="image/jpeg,image/png,image/webp"
+        accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
         className="hidden"
       />
 
@@ -110,7 +166,7 @@ export function PhotoUpload({ photoUrl, onChange }: PhotoUploadProps) {
           {isUploading ? (
             <div className="flex items-center gap-2">
               <RefreshCw className="w-4 h-4 animate-spin text-cync-green" />
-              <span>Uploading proof...</span>
+              <span>Optimizing and uploading proof...</span>
             </div>
           ) : (
             <>
@@ -118,7 +174,7 @@ export function PhotoUpload({ photoUrl, onChange }: PhotoUploadProps) {
                 <Camera className="w-4 h-4" />
               </div>
               <span className="font-medium text-xs">Attach proof photo or screenshot</span>
-              <span className="text-[10px] text-muted-foreground/75">PNG, JPG, WebP up to 5MB</span>
+              <span className="text-[10px] text-muted-foreground/75">PNG, JPG, WebP up to 15MB</span>
             </>
           )}
         </button>
@@ -126,4 +182,3 @@ export function PhotoUpload({ photoUrl, onChange }: PhotoUploadProps) {
     </div>
   );
 }
-

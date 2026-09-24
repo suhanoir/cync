@@ -3,6 +3,8 @@ import { Card } from '../ui/Card';
 import { QuoteBlock } from '../ui/QuoteBlock';
 import { Dumbbell, Clock, Users } from 'lucide-react';
 
+import { formatDuration } from '@/lib/workout-time';
+
 interface WeeklySquadRecapProps {
   squadName: string;
   totalWorkouts: number;
@@ -18,9 +20,7 @@ export function WeeklySquadRecap({
   activeMembersCount,
   totalMembersCount,
 }: WeeklySquadRecapProps) {
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  const timeFormatted = hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
+  const timeFormatted = formatDuration(totalMinutes);
 
   return (
     <Card className="p-5 space-y-4 bg-card border border-border">

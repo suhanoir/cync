@@ -5,7 +5,9 @@ import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { calculateStreaks, getWeeklyOverview, formatDateToTz } from '@/lib/analytics';
 import { WeeklyDots } from '@/components/dashboard/WeeklyDots';
+import { ActiveWorkoutBanner } from '@/components/dashboard/ActiveWorkoutBanner';
 import { ActivityFeedItem } from '@/components/feed/ActivityFeedItem';
+import { formatDuration, formatTimeRange } from '@/lib/workout-time';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
@@ -53,6 +55,8 @@ export default async function DashboardPage() {
       id: true,
       type: true,
       duration: true,
+      startTime: true,
+      endTime: true,
       completedAt: true,
     },
     orderBy: { completedAt: 'desc' },
@@ -204,6 +208,9 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
+      {/* Active Workout Banner (if workout in progress) */}
+      <ActiveWorkoutBanner />
+
       {/* 2. Today's Status & Streak Hero Card */}
       <Card className="p-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -213,16 +220,20 @@ export default async function DashboardPage() {
             </span>
 
             {todayWorkout ? (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-cync-green" />
                   <h2 className="text-xl font-bold text-foreground">
                     Workout completed
                   </h2>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {todayWorkout.duration} min • {todayWorkout.type}
-                </p>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <span className="font-semibold text-foreground">{todayWorkout.type}</span>
+                  <span>•</span>
+                  <span>{formatTimeRange(todayWorkout.startTime, todayWorkout.endTime, todayWorkout.completedAt, user.timezone)}</span>
+                  <span>•</span>
+                  <span className="font-medium text-cync-green">{formatDuration(todayWorkout.duration)}</span>
+                </div>
               </div>
             ) : (
               <div className="space-y-1">

@@ -14,6 +14,8 @@ interface WorkoutItem {
   id: string;
   type: string;
   duration: number;
+  startTime?: string | Date | null;
+  endTime?: string | Date | null;
   distance?: number | null;
   calories?: number | null;
   completedAt: string | Date;

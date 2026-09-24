@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
 import { format } from 'date-fns';
+import { formatDuration, formatTimeRange, formatWorkoutDate } from '@/lib/workout-time';
 import { Clock, Flame, MapPin, Dumbbell, Calendar, Users } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -82,9 +83,16 @@ export default async function WorkoutDetailPage({
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
               {workout.type} Session
             </h1>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Calendar className="w-3.5 h-3.5" />
-              <span>{format(completedDate, 'EEEE, MMMM d, yyyy • h:mm a')}</span>
+            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground pt-0.5">
+              <span className="flex items-center gap-1.5 font-medium text-foreground">
+                <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+                {formatWorkoutDate(workout.startTime || completedDate, user.timezone)}
+              </span>
+              <span className="text-border">•</span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-cync-green" />
+                {formatTimeRange(workout.startTime, workout.endTime, workout.completedAt, user.timezone)}
+              </span>
             </div>
           </div>
 
@@ -107,7 +115,7 @@ export default async function WorkoutDetailPage({
               <Clock className="w-3.5 h-3.5 text-cync-green" />
               <span>Duration</span>
             </div>
-            <p className="text-lg font-bold text-foreground">{workout.duration} min</p>
+            <p className="text-lg font-bold text-foreground">{formatDuration(workout.duration)}</p>
           </div>
 
           <div className="p-3.5 rounded-lg bg-muted/40 border border-border space-y-1">

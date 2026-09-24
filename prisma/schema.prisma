@@ -80,6 +80,8 @@ model Workout {
   squad       Squad?            @relation(fields: [squadId], references: [id], onDelete: SetNull)
   type        String            // "Strength", "Cardio", "Running", "Cycling", "Calisthenics", "HIIT", "Walking", "Sports", "Yoga", "Other"
   duration    Int               // in minutes
+  startTime   DateTime?
+  endTime     DateTime?
   distance    Float?            // in km
   calories    Int?
   notes       String?

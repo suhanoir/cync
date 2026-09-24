@@ -9,7 +9,9 @@ import { WorkoutType } from '@/lib/types';
 
 export async function createWorkoutAction(payload: {
   type: string;
-  duration: number | string;
+  duration?: number | string | null;
+  startTime?: string | Date | null;
+  endTime?: string | Date | null;
   distance?: number | string | null;
   calories?: number | string | null;
   completedAt?: string | Date;
@@ -30,8 +32,18 @@ export async function createWorkoutAction(payload: {
     return { error: validation.error || 'Invalid workout data.' };
   }
 
-  const { type, duration, distance, calories, completedAt, notes, squadId, exercises } =
-    validation.data;
+  const {
+    type,
+    duration,
+    startTime,
+    endTime,
+    distance,
+    calories,
+    completedAt,
+    notes,
+    squadId,
+    exercises,
+  } = validation.data;
 
   // Verify squad membership if squadId was provided
   let verifiedSquadId: string | null = null;
@@ -56,6 +68,8 @@ export async function createWorkoutAction(payload: {
       squadId: verifiedSquadId,
       type,
       duration,
+      startTime,
+      endTime,
       distance,
       calories,
       completedAt,
@@ -128,7 +142,9 @@ export async function updateWorkoutAction(
   workoutId: string,
   payload: {
     type: string;
-    duration: number | string;
+    duration?: number | string | null;
+    startTime?: string | Date | null;
+    endTime?: string | Date | null;
     distance?: number | string | null;
     calories?: number | string | null;
     completedAt?: string | Date;
@@ -159,8 +175,17 @@ export async function updateWorkoutAction(
     return { error: validation.error || 'Invalid workout data.' };
   }
 
-  const { type, duration, distance, calories, completedAt, notes, exercises } =
-    validation.data;
+  const {
+    type,
+    duration,
+    startTime,
+    endTime,
+    distance,
+    calories,
+    completedAt,
+    notes,
+    exercises,
+  } = validation.data;
 
   // Update in a transaction
   await db.$transaction(async (tx) => {
@@ -209,6 +234,8 @@ export async function updateWorkoutAction(
       data: {
         type,
         duration,
+        startTime,
+        endTime,
         distance,
         calories,
         completedAt,

@@ -6,12 +6,15 @@ import { Badge } from '../ui/Badge';
 import { ReactionPicker } from './ReactionPicker';
 import { Clock, MapPin, Dumbbell, Flame, Image as ImageIcon } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { formatDuration, formatTimeRange } from '@/lib/workout-time';
 
 interface ActivityFeedItemProps {
   workout: {
     id: string;
     type: string;
     duration: number;
+    startTime?: string | Date | null;
+    endTime?: string | Date | null;
     distance?: number | null;
     calories?: number | null;
     completedAt: string | Date;
@@ -37,6 +40,12 @@ export function ActivityFeedItem({ workout, currentUserId }: ActivityFeedItemPro
   const relativeTime = formatDistanceToNow(new Date(workout.completedAt), {
     addSuffix: true,
   });
+
+  const timeRange = formatTimeRange(
+    workout.startTime,
+    workout.endTime,
+    null
+  );
 
   return (
     <Card className="p-4 sm:p-5 space-y-3 hover:border-border/80 transition-colors">
@@ -71,9 +80,15 @@ export function ActivityFeedItem({ workout, currentUserId }: ActivityFeedItemPro
           Completed {workout.type}
         </span>
 
+        {timeRange && (
+          <span className="text-[11px] text-muted-foreground px-2 py-0.5 rounded bg-muted/60 border border-border">
+            {timeRange}
+          </span>
+        )}
+
         <Badge variant="green" size="sm">
           <Clock className="w-3 h-3" />
-          <span>{workout.duration} min</span>
+          <span>{formatDuration(workout.duration)}</span>
         </Badge>
 
         {workout.distance && (
@@ -98,33 +113,39 @@ export function ActivityFeedItem({ workout, currentUserId }: ActivityFeedItemPro
         )}
       </div>
 
-      {/* Notes if present */}
+      {/* Notes / Reflection snippet */}
       {workout.notes && (
-        <p className="text-xs text-muted-foreground bg-muted/30 p-2.5 rounded-lg border border-border/60 leading-relaxed">
+        <p className="text-xs text-muted-foreground leading-relaxed italic bg-muted/20 p-2.5 rounded-lg border border-border/50">
           &ldquo;{workout.notes}&rdquo;
         </p>
       )}
 
-      {/* Proof Photo if present */}
+      {/* Proof Photo snippet */}
       {workout.photo && (
         <div className="rounded-lg overflow-hidden border border-border max-w-xs">
           <img
             src={workout.photo.storageReference}
             alt="Workout proof"
-            className="w-full h-36 object-cover"
+            className="w-full h-40 object-cover"
           />
         </div>
       )}
 
-      {/* Social Reactions Footer */}
-      <div className="pt-2 border-t border-border flex items-center justify-between">
+      {/* Reactions Section */}
+      <div className="pt-1 flex items-center justify-between border-t border-border">
         <ReactionPicker
           workoutId={workout.id}
-          reactions={workout.reactions}
           currentUserId={currentUserId}
+          reactions={workout.reactions}
         />
+
+        <Link
+          href={`/workouts/${workout.id}`}
+          className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+        >
+          <span>Session log</span>
+        </Link>
       </div>
     </Card>
   );
 }
-

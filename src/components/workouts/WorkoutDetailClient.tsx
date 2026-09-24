@@ -91,6 +91,8 @@ export function WorkoutDetailClient({ workout, isOwner, squads }: WorkoutDetailC
             id: workout.id,
             type: workout.type,
             duration: workout.duration,
+            startTime: workout.startTime,
+            endTime: workout.endTime,
             distance: workout.distance,
             calories: workout.calories,
             completedAt: workout.completedAt,

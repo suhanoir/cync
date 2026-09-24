@@ -4,12 +4,15 @@ import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Clock, Flame, MapPin, Dumbbell, Image, Users, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
+import { formatDuration, formatTimeRange } from '@/lib/workout-time';
 
 interface WorkoutCardProps {
   workout: {
     id: string;
     type: string;
     duration: number;
+    startTime?: Date | string | null;
+    endTime?: Date | string | null;
     distance?: number | null;
     calories?: number | null;
     completedAt: Date | string;
@@ -19,11 +22,18 @@ interface WorkoutCardProps {
     squad?: { name: string } | null;
     reactions?: { type: string }[];
   };
+  timezone?: string;
 }
 
-export function WorkoutCard({ workout }: WorkoutCardProps) {
+export function WorkoutCard({ workout, timezone }: WorkoutCardProps) {
   const completedDate = new Date(workout.completedAt);
   const exerciseCount = workout.exercises?.length || 0;
+  const timeRange = formatTimeRange(
+    workout.startTime,
+    workout.endTime,
+    workout.completedAt,
+    timezone
+  );
 
   return (
     <Link href={`/workouts/${workout.id}`} className="block group">
@@ -38,7 +48,7 @@ export function WorkoutCard({ workout }: WorkoutCardProps) {
 
               <Badge variant="green" size="sm">
                 <Clock className="w-3 h-3" />
-                <span>{workout.duration} min</span>
+                <span>{formatDuration(workout.duration)}</span>
               </Badge>
 
               {workout.distance && (
@@ -111,14 +121,14 @@ export function WorkoutCard({ workout }: WorkoutCardProps) {
             )}
           </div>
 
-          {/* Right side: Date and arrow */}
+          {/* Right side: Date, time range, and arrow */}
           <div className="flex items-center gap-2 text-right shrink-0">
             <div className="text-right">
-              <span className="block text-xs font-medium text-foreground">
+              <span className="block text-xs font-semibold text-foreground">
                 {format(completedDate, 'MMM d')}
               </span>
-              <span className="block text-[11px] text-muted-foreground">
-                {format(completedDate, 'h:mm a')}
+              <span className="block text-[11px] text-muted-foreground whitespace-nowrap">
+                {timeRange}
               </span>
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-cync-green transition-transform group-hover:translate-x-0.5" />
@@ -128,4 +138,3 @@ export function WorkoutCard({ workout }: WorkoutCardProps) {
     </Link>
   );
 }
-

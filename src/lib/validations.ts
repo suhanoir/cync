@@ -1,4 +1,8 @@
 import { WORKOUT_TYPES, WorkoutType } from './types';
+import {
+  validateWorkoutTimeRange,
+  MAX_WORKOUT_DURATION_MINUTES,
+} from './workout-time';
 
 export interface ValidationResult<T> {
   success: boolean;
@@ -87,7 +91,9 @@ export function validateLoginInput(data: {
 
 export function validateWorkoutInput(data: {
   type?: string;
-  duration?: number | string;
+  duration?: number | string | null;
+  startTime?: string | Date | null;
+  endTime?: string | Date | null;
   distance?: number | string | null;
   calories?: number | string | null;
   completedAt?: string | Date;
@@ -102,6 +108,8 @@ export function validateWorkoutInput(data: {
 }): ValidationResult<{
   type: WorkoutType;
   duration: number;
+  startTime: Date | null;
+  endTime: Date | null;
   distance: number | null;
   calories: number | null;
   completedAt: Date;
@@ -120,11 +128,31 @@ export function validateWorkoutInput(data: {
     fieldErrors.type = `Please select a valid workout type (${WORKOUT_TYPES.join(', ')}).`;
   }
 
-  const durationNum = typeof data.duration === 'string' ? parseInt(data.duration, 10) : Number(data.duration);
-  if (isNaN(durationNum) || durationNum <= 0) {
-    fieldErrors.duration = 'Duration must be greater than 0 minutes.';
-  } else if (durationNum > 1440) {
-    fieldErrors.duration = 'Duration cannot exceed 24 hours (1440 minutes).';
+  let durationNum = 0;
+  let parsedStartTime: Date | null = null;
+  let parsedEndTime: Date | null = null;
+
+  if (data.startTime && data.endTime) {
+    const timeValidation = validateWorkoutTimeRange(data.startTime, data.endTime);
+    if (!timeValidation.valid) {
+      fieldErrors.duration = timeValidation.error || 'Invalid start and end times.';
+    } else {
+      durationNum = timeValidation.duration;
+      parsedStartTime = typeof data.startTime === 'string' ? new Date(data.startTime) : data.startTime;
+      parsedEndTime = typeof data.endTime === 'string' ? new Date(data.endTime) : data.endTime;
+    }
+  } else {
+    // If start/end times not both provided, validate duration directly
+    const parsedDuration =
+      typeof data.duration === 'string' ? parseInt(data.duration, 10) : Number(data.duration);
+
+    if (isNaN(parsedDuration) || parsedDuration <= 0) {
+      fieldErrors.duration = 'Duration must be greater than 0 minutes.';
+    } else if (parsedDuration > MAX_WORKOUT_DURATION_MINUTES) {
+      fieldErrors.duration = 'Workout duration cannot exceed 12 hours.';
+    } else {
+      durationNum = parsedDuration;
+    }
   }
 
   let distanceNum: number | null = null;
@@ -144,7 +172,9 @@ export function validateWorkoutInput(data: {
   }
 
   let date: Date;
-  if (!data.completedAt) {
+  if (parsedEndTime) {
+    date = parsedEndTime;
+  } else if (!data.completedAt) {
     date = new Date();
   } else {
     date = new Date(data.completedAt);
@@ -188,6 +218,8 @@ export function validateWorkoutInput(data: {
     data: {
       type: data.type as WorkoutType,
       duration: durationNum,
+      startTime: parsedStartTime,
+      endTime: parsedEndTime,
       distance: distanceNum,
       calories: caloriesNum,
       completedAt: date,

@@ -10,6 +10,7 @@ import { WorkoutDurationChart } from './WorkoutDurationChart';
 import { WeeklyDayDistributionChart, WorkoutTypeDistributionChart } from './WeeklyDayDistributionChart';
 import { ActivityHeatmap } from './ActivityHeatmap';
 import { formatDateToTz } from '@/lib/analytics';
+import { formatDuration } from '@/lib/workout-time';
 import { Clock, Dumbbell, Flame, Activity, ChevronDown, ChevronUp, Plus, TrendingUp } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 
@@ -220,8 +221,8 @@ export function ProgressViewClient({
             <Clock className="w-3.5 h-3.5 text-cync-green" />
             <span>Total Active Time</span>
           </div>
-          <p className="text-2xl font-extrabold text-foreground">{totalDuration} min</p>
-          <span className="text-[11px] text-muted-foreground">avg {avgDuration} min / workout</span>
+          <p className="text-2xl font-extrabold text-foreground">{formatDuration(totalDuration)}</p>
+          <span className="text-[11px] text-muted-foreground">avg {formatDuration(avgDuration)} / workout</span>
         </Card>
 
         {/* Current & Longest Streak */}
