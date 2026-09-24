@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light;
   --background: #f8f9fa;
   --foreground: #141416;
   --card: #ffffff;
@@ -13,6 +14,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: #0c0c0e;
   --foreground: #ededee;
   --card: #141417;
@@ -31,6 +33,45 @@ body {
   color: var(--foreground);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
+}
+
+/* Explicit text color and caret guarantee on input fields */
+input, textarea, select {
+  color: var(--foreground);
+}
+
+.dark input, 
+.dark textarea, 
+.dark select {
+  color: #ededee !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #82828e !important;
+}
+
+/* Fix browser autofill / credentials fill in light and dark mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #141416 !important;
+  -webkit-box-shadow: 0 0 0 1000px #f4f4f5 inset !important;
+  box-shadow: 0 0 0 1000px #f4f4f5 inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: #141416 !important;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ededee !important;
+  -webkit-box-shadow: 0 0 0 1000px #18181b inset !important;
+  box-shadow: 0 0 0 1000px #18181b inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: #ededee !important;
 }
 
 /* Custom minimal scrollbar */
@@ -57,4 +98,3 @@ body {
   outline: 2px solid #10b981;
   outline-offset: 2px;
 }
-

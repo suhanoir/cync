@@ -27,7 +27,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           className={twMerge(
             clsx(
-              'w-full px-3.5 py-2 text-sm bg-muted/40 border border-border rounded-lg text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-cync-green focus:border-cync-green transition-colors',
+              'w-full px-3.5 py-2 text-sm bg-muted/60 dark:bg-zinc-900 border border-border rounded-lg text-foreground dark:text-zinc-100 placeholder:text-muted-foreground/60 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-cync-green focus:border-cync-green transition-colors caret-foreground',
               error && 'border-red-500/50 focus:ring-red-500 focus:border-red-500',
               className
             )
@@ -42,4 +42,3 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 
 Input.displayName = 'Input';
-

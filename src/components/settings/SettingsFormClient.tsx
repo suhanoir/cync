@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
 import { ThemeToggle } from '../navigation/ThemeToggle';
+import { InstallPWA } from '../navigation/InstallPWA';
 import { updateProfileAction, deleteAccountAction } from '@/actions/auth';
 import { updatePreferencesAction, changePasswordAction } from '@/actions/settings';
 import { useToast } from '../providers/ToastProvider';
@@ -265,7 +266,7 @@ export function SettingsFormClient({ user }: SettingsFormClientProps) {
               onChange={(e) => setBio(e.target.value)}
               maxLength={200}
               placeholder="Short bio or personal motto..."
-              className="w-full px-3.5 py-2 text-sm bg-muted/40 border border-border rounded-lg text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-cync-green resize-none"
+              className="w-full px-3.5 py-2 text-sm bg-muted/60 dark:bg-zinc-900 border border-border rounded-lg text-foreground dark:text-zinc-100 placeholder:text-muted-foreground/60 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-cync-green resize-none"
             />
           </div>
 
@@ -277,7 +278,10 @@ export function SettingsFormClient({ user }: SettingsFormClientProps) {
         </form>
       </Card>
 
-      {/* 2. Appearance */}
+      {/* 2. Mobile App Download */}
+      <InstallPWA variant="card" />
+
+      {/* 3. Appearance */}
       <Card className="p-6 space-y-4">
         <div className="flex items-center gap-2 pb-3 border-b border-border">
           <Sun className="w-4 h-4 text-amber-500" />

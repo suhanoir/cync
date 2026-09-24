@@ -86,6 +86,7 @@ export default function RegisterPage() {
               placeholder="Suhan Dev"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              autoComplete="name"
               required
             />
 
@@ -95,6 +96,7 @@ export default function RegisterPage() {
               placeholder="suhan_fit"
               value={username}
               onChange={(e) => setUsername(e.target.value.toLowerCase().trim())}
+              autoComplete="username"
               helperText="3-20 letters, numbers, hyphens or underscores"
               required
             />
@@ -105,6 +107,7 @@ export default function RegisterPage() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               required
             />
 
@@ -114,6 +117,7 @@ export default function RegisterPage() {
               placeholder="At least 8 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
               required
             />
 
@@ -123,6 +127,7 @@ export default function RegisterPage() {
               placeholder="Repeat your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              autoComplete="new-password"
               required
             />
 
