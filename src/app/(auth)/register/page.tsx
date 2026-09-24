@@ -45,9 +45,12 @@ export default function RegisterPage() {
       if (res?.error) {
         setError(res.error);
         setIsLoading(false);
+      } else if (res?.redirectTo) {
+        window.location.href = res.redirectTo;
       }
-    } catch {
-      // In Next.js, redirect throws a NEXT_REDIRECT error which is normal behavior
+    } catch (err: any) {
+      setError(err?.message || 'Registration failed. Please try again.');
+      setIsLoading(false);
     }
   };
 

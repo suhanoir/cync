@@ -28,9 +28,12 @@ export default function LoginPage() {
       if (res?.error) {
         setError(res.error);
         setIsLoading(false);
+      } else if (res?.redirectTo) {
+        window.location.href = res.redirectTo;
       }
-    } catch {
-      // In Next.js, redirect throws a NEXT_REDIRECT error which is normal behavior
+    } catch (err: any) {
+      setError(err?.message || 'Login failed. Please check your connection.');
+      setIsLoading(false);
     }
   };
 

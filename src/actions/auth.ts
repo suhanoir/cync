@@ -49,62 +49,71 @@ export async function registerAction(formData: FormData) {
     return { error: 'This username is already taken. Please pick another.' };
   }
 
-  const passwordHash = await hashPassword(validation.data.password);
+  try {
+    const passwordHash = await hashPassword(validation.data.password);
 
-  const newUser = await db.user.create({
-    data: {
-      name: validation.data.name,
-      username: validation.data.username,
-      email: validation.data.email,
-      passwordHash,
-      onboarded: false,
-    },
-  });
+    const newUser = await db.user.create({
+      data: {
+        name: validation.data.name,
+        username: validation.data.username,
+        email: validation.data.email,
+        passwordHash,
+        onboarded: false,
+      },
+    });
 
-  const token = await createSessionToken({
-    userId: newUser.id,
-    email: newUser.email,
-  });
+    const token = await createSessionToken({
+      userId: newUser.id,
+      email: newUser.email,
+    });
 
-  await setSessionCookie(token);
+    await setSessionCookie(token);
 
-  redirect('/onboarding');
+    return { success: true, redirectTo: '/onboarding' };
+  } catch (err: any) {
+    console.error('Registration error:', err);
+    return { error: 'Failed to create account. Please try again.' };
+  }
 }
 
 export async function loginAction(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  try {
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
 
-  const validation = validateLoginInput({ email, password });
-  if (!validation.success || !validation.data) {
-    return { error: validation.error || 'Please provide email and password.' };
+    const validation = validateLoginInput({ email, password });
+    if (!validation.success || !validation.data) {
+      return { error: validation.error || 'Please provide email and password.' };
+    }
+
+    const user = await db.user.findUnique({
+      where: { email: validation.data.email },
+    });
+
+    if (!user) {
+      return { error: 'Invalid email or password.' };
+    }
+
+    const isValid = await verifyPassword(validation.data.password, user.passwordHash);
+    if (!isValid) {
+      return { error: 'Invalid email or password.' };
+    }
+
+    const token = await createSessionToken({
+      userId: user.id,
+      email: user.email,
+    });
+
+    await setSessionCookie(token);
+
+    return {
+      success: true,
+      redirectTo: user.onboarded ? '/dashboard' : '/onboarding',
+    };
+  } catch (err: any) {
+    console.error('Login error:', err);
+    return { error: 'Could not connect to database. Please try again.' };
   }
-
-  const user = await db.user.findUnique({
-    where: { email: validation.data.email },
-  });
-
-  if (!user) {
-    return { error: 'Invalid email or password.' };
-  }
-
-  const isValid = await verifyPassword(validation.data.password, user.passwordHash);
-  if (!isValid) {
-    return { error: 'Invalid email or password.' };
-  }
-
-  const token = await createSessionToken({
-    userId: user.id,
-    email: user.email,
-  });
-
-  await setSessionCookie(token);
-
-  if (!user.onboarded) {
-    redirect('/onboarding');
-  }
-
-  redirect('/dashboard');
 }
 
 export async function logoutAction() {
