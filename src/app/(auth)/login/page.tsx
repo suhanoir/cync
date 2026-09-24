@@ -37,12 +37,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleFillDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('Password123!');
-    setError(null);
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background selection:bg-emerald-500/20">
       <div className="w-full max-w-sm space-y-6">
@@ -96,32 +90,6 @@ export default function LoginPage() {
               <ArrowRight className="w-4 h-4" />
             </Button>
           </form>
-
-          {/* Demo Sandbox for Testing */}
-          <div className="mt-6 pt-5 border-t border-border">
-            <div className="flex items-center justify-center gap-1.5 mb-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80" />
-              <p className="text-[11px] text-muted-foreground text-center uppercase tracking-wider font-semibold">
-                Demo Sandbox Accounts
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => handleFillDemo('suhan@cync.fit')}
-                className="py-1.5 px-2 bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg border border-border text-center transition-colors font-medium"
-              >
-                Suhan (Squad Leader)
-              </button>
-              <button
-                type="button"
-                onClick={() => handleFillDemo('arjun@cync.fit')}
-                className="py-1.5 px-2 bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg border border-border text-center transition-colors font-medium"
-              >
-                Arjun (Squad Member)
-              </button>
-            </div>
-          </div>
         </Card>
 
         {/* Bottom Switch */}
